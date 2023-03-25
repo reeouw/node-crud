@@ -108,18 +108,14 @@ exports.update = (req, res) => {
   );
 };
 
+// Upload vehicle image
 exports.imageUpload = async (req, res) => {
   try {
     // Get vehicle ID from URL params 
     const vehicleId = req.params.id;
 
     // Define path
-    const path = __basedir + "/resources/assets/uploads/" + vehicleId + "/";
-    
-    // Create a new path if doesn't exist
-    if (!fs.existsSync(path)){
-      fs.mkdirSync(path);
-    }
+    const path = __basedir + "/resources/assets/uploads/";
     
     // Upload file with multer
     await uploadFile(req, res);
@@ -144,9 +140,10 @@ exports.imageUpload = async (req, res) => {
     // Generate thumbnail
     thumbnail.forEach(size => {
       // New file fullpath
-      let imageFullpath = newName+"_"+size+"."+ext
+      let imageFullpath = vehicleId+"_"+newName+"_"+size+"."+ext
+      
       // Create a new resized image
-      sharp(path+filename)
+      sharp(path+vehicleId+"_"+filename)
         .resize({
           height: size
         })

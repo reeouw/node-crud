@@ -2,6 +2,7 @@ const sql = require("./db.js");
 
 // constructor
 const Vehicle = function(vehicle) {
+    this.id = vehicle.id;
     this.name = vehicle.name;
 };
 
@@ -36,11 +37,27 @@ Vehicle.create = (newVehicle, result) => {
     });
 };
 
+Vehicle.upload = (vehicleImage, result) => {
+    sql.query("INSERT INTO vehicle_images (vehicle_id, path, size) VALUES (?, ?, ?)",
+        [
+            vehicleImage.vehicle_id,
+            vehicleImage.path,
+            vehicleImage.size,
+        ], 
+        (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+    })
+}
+
 Vehicle.findById = (id, result) => {
     
-    let query = "SELECT * FROM vehicles WHERE id = ? ";
+    let query = "SELECT vehicles.id, vehicles.name, vehicle_images.path, vehicle_images.size FROM vehicles JOIN vehicle_images ON vehicles.id = vehicle_images.vehicle_id WHERE vehicles.id = ? AND vehicle_images.size = ? ";
 
-    sql.query(query, [id], (err, res) => {
+    sql.query(query, [id, '500'], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -48,7 +65,7 @@ Vehicle.findById = (id, result) => {
         }
 
         if (res.length) {
-            console.log("found tutorial: ", res[0]);
+            console.log("found vehicle: ", res[0]);
             result(null, res[0]);
             return;
         }

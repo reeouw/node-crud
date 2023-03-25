@@ -1,7 +1,8 @@
 const Vehicle = require("../models/vehicle.model.js");
-
+const fs = require('fs');
+const crypto = require('crypto');
 const { validationResult } = require('express-validator');
-
+const sharp = require("sharp");
 const uploadFile = require("../middlewares/upload");
 
 // Retrieve all vehicle from the database (with condition).
@@ -18,7 +19,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Create and Save a new Tutorial
+// Create and Save a new vehicle
 exports.create = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -49,7 +50,7 @@ exports.create = (req, res) => {
   });
 };
 
-// Find a single Tutorial by Id
+// Find a single vehicle by Id
 exports.findOne = (req, res) => {
   Vehicle.findById(req.params.id, (err, data) => {
     if (err) {
@@ -66,7 +67,7 @@ exports.findOne = (req, res) => {
   });
 };
 
-// Update a Tutorial identified by the id in the request
+// Update a vehicle identified by the id in the request
 exports.update = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -95,11 +96,11 @@ exports.update = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found Tutorial with id ${req.params.id}.`
+            message: `Not found vehicle with id ${req.params.id}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating Tutorial with id " + req.params.id
+            message: "Error updating vehicle with id " + req.params.id
           });
         }
       } else res.send(data);
@@ -109,13 +110,68 @@ exports.update = (req, res) => {
 
 exports.imageUpload = async (req, res) => {
   try {
+    // Get vehicle ID from URL params 
+    const vehicleId = req.params.id;
+
+    // Define path
+    const path = __basedir + "/resources/assets/uploads/" + vehicleId + "/";
+    
+    // Create a new path if doesn't exist
+    if (!fs.existsSync(path)){
+      fs.mkdirSync(path);
+    }
+    
+    // Upload file with multer
     await uploadFile(req, res);
+    
+    // Return error if file doesn't exist
     if (req.file == undefined) {
       return res.status(400).send({ message: "Please upload a file!" });
     }
 
+    // Array of image size 
+    const thumbnail = [500, 1000];
+
+    // Create a filename
+    const filename = req.file.originalname;
+
+    // Get file extension
+    const ext = filename.split('.')[1];
+    
+    // Create a new filename for reseized image
+    let newName = crypto.randomBytes(8).toString('hex');
+
+    // Generate thumbnail
+    thumbnail.forEach(size => {
+      // New file fullpath
+      let imageFullpath = newName+"_"+size+"."+ext
+      // Create a new resized image
+      sharp(path+filename)
+        .resize({
+          height: size
+        })
+        .toFile(path+imageFullpath)
+
+      // Data to be stored into database
+      let vehicleImage = {
+        vehicle_id: vehicleId,
+        path: imageFullpath,
+        size: size
+      };
+
+      // Save vehicle in the database
+      Vehicle.upload(vehicleImage, (err, data) => {
+        if (err)
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the Vehicle."
+          });
+        else res.send(data);
+      });
+    });
+
     res.status(200).send({
-      message: "Uploaded the file successfully: " + req.file.originalname,
+      message: "Uploaded the file successfully: " + filename,
     });
   } catch (err) {
     if (err.code == "LIMIT_FILE_SIZE") {

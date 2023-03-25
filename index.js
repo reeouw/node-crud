@@ -1,14 +1,15 @@
 const express = require("express");
-// const bodyParser = require("body-parser"); /* deprecated */
-const cors = require("cors");
+
+const cors = require("cors"); 
 
 const app = express();
-
-global.__basedir = __dirname;
 
 const dotenv = require('dotenv');
 
 dotenv.config();
+
+global.__basedir = __dirname;
+
 
 var corsOptions = {
   origin: "http://localhost:8081"
@@ -28,6 +29,10 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/vehicle.route.js")(app);
+
+// Function to serve all static files
+// inside resources directory. 
+app.use(express.static('resources'));
 
 // set port, listen for requests
 const PORT = process.env.PORT;

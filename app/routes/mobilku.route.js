@@ -7,6 +7,9 @@ module.exports = app => {
     
     // Show user
     router.get('/:id', mobilku.show);
+    
+    // Update user
+    router.put('/:id', mobilku.update);
 
     app.use('/api/mobilku', router);
   };

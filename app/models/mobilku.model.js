@@ -14,16 +14,16 @@ exports.mobilkuCreate = (user, response) => {
     });
 };
 
-exports.mobilkuImageCreate = (userImage, response) => {
+exports.mobilkuImageCreate = (path, response) => {
     let query = "INSERT INTO mobilku_images SET ?"; 
-    sql.query(query, userImage, (err, res) => {
+    sql.query(query, path, (err, res) => {
         if (err) {
             console.log("error: ", err);
             response(err, null);
         }
 
-        console.log('User image created: ', { id: res.insertId, ...userImage });
-        response(null, { id: res.insertId, ...userImage });
+        console.log('User image created: ', { id: res.insertId, ...path });
+        response(null, { id: res.insertId, ...path });
     })
 };
 
@@ -47,3 +47,29 @@ exports.mobilkuShow = (id, response) => {
         response({ kind: "not_found" }, null);
     });
 }
+
+exports.mobilkuUpdate = (updateUser, userId, response) => {
+    let query = "UPDATE mobilku SET ? WHERE id = ?"; 
+    sql.query(query, [updateUser, userId], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            response(err, null);
+        }
+        
+        console.log('User created: ', { id: res.insertId, ...updateUser });
+        response(null, { id: res.insertId, ...updateUser });
+    });
+};
+
+exports.mobilkuImageUpdate = (newPath, userId, size, response) => {
+    let query = "UPDATE mobilku_images SET path = ?, size = ? WHERE mobilku_id = ? AND size = ?"; 
+    sql.query(query, [newPath, size, userId, size], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            response(err, null);
+        }
+
+        console.log('User image updated : ', { id: res.insertId });
+        response(null, { id: res.insertId });
+    })
+};

@@ -39,8 +39,8 @@ app.use(express.static('resources'));
 const PORT = process.env.PORT;
 https
   .createServer({
-    key: fs.readFileSync("ssl/key.pem"),
-    cert: fs.readFileSync("ssl/cert.pem"),
+    key: fs.readFileSync("cert/key.pem"),
+    cert: fs.readFileSync("cert/cert.pem"),
   },app)
   .listen(PORT, () => {
   console.log(`Server is running on port https://localhost:${PORT}.`);

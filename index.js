@@ -1,5 +1,7 @@
+const https = require("https");
+const fs = require('fs');
 const express = require("express");
-const cors = require("cors"); 
+const cors = require("cors");
 const app = express();
 
 const dotenv = require('dotenv');
@@ -35,6 +37,11 @@ app.use(express.static('resources'));
 
 // set port, listen for requests
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}.`);
+https
+  .createServer({
+    key: fs.readFileSync("ssl/key.pem"),
+    cert: fs.readFileSync("ssl/cert.pem"),
+  },app)
+  .listen(PORT, () => {
+  console.log(`Server is running on port https://localhost:${PORT}.`);
 });

@@ -55,7 +55,7 @@ Vehicle.upload = (vehicleImage, result) => {
 
 Vehicle.findById = (id, result) => {
     
-    let query = "SELECT vehicles.id, vehicles.name, vehicle_images.path, vehicle_images.size FROM vehicles JOIN vehicle_images ON vehicles.id = vehicle_images.vehicle_id WHERE vehicles.id = ? AND vehicle_images.size = ? ";
+    let query = "SELECT vehicles.id, vehicles.name, vehicle_images.path, vehicle_images.size FROM vehicles LEFT JOIN vehicle_images ON vehicles.id = vehicle_images.vehicle_id WHERE vehicles.id = ? AND vehicle_images.size = ? OR vehicle_images.size IS NULL";
 
     sql.query(query, [id, '500'], (err, res) => {
         if (err) {

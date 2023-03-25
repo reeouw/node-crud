@@ -1,6 +1,7 @@
 const {
     mobilkuCreate,
     mobilkuImageCreate,
+    mobilkuShow,
 } = require('../models/mobilku.model');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -76,7 +77,6 @@ exports.create = async (req, res) => {
                                 res.status(500).send({
                                     message: err.message || "Some error occurred while creating the Vehicle."
                                 });
-                            // else res.send(data);
                         });
                     });
             
@@ -99,3 +99,19 @@ exports.create = async (req, res) => {
         });
     }
 };
+
+exports.show = (req, res) => {
+    mobilkuShow(req.params.id, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+              res.status(404).send({
+                message: `Not found user with id ${req.params.id}.`
+              });
+            } else {
+              res.status(500).send({
+                message: "Error retrieving user with id " + req.params.id
+              });
+            }
+        } else res.send(data);
+    });
+}

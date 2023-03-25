@@ -4,6 +4,9 @@ module.exports = app => {
 
     // Create a new user
     router.post('/', mobilku.create);
+    
+    // Show user
+    router.get('/:id', mobilku.show);
 
     app.use('/api/mobilku', router);
   };

@@ -4,7 +4,7 @@ const { validationResult } = require('express-validator');
 
 const uploadFile = require("../middlewares/upload");
 
-// Retrieve all Tutorials from the database (with condition).
+// Retrieve all vehicle from the database (with condition).
 exports.findAll = (req, res) => {
     const name = req.query.name;
   
@@ -12,7 +12,7 @@ exports.findAll = (req, res) => {
       if (err)
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving vehicles."
         });
       else res.send(data);
     });
@@ -55,7 +55,7 @@ exports.findOne = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Tutorial with id ${req.params.id}.`
+          message: `Not found vehicle with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({

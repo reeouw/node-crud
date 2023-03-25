@@ -1,7 +1,5 @@
 const express = require("express");
-
 const cors = require("cors"); 
-
 const app = express();
 
 const dotenv = require('dotenv');
@@ -28,7 +26,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome." });
 });
 
-require("./app/routes/vehicle.route.js")(app);
+// require("./app/routes/vehicle.route.js")(app);
+require("./app/routes/mobilku.route.js")(app);
 
 // Function to serve all static files
 // inside resources directory. 

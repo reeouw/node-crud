@@ -12,7 +12,7 @@ global.__basedir = __dirname;
 
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "https://www.mobilku.biz"
 };
 
 app.use(cors(corsOptions));
